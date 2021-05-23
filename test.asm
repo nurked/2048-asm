@@ -39,6 +39,7 @@ segment	.bbs
 	;03 = 262144 - impossible
 
 
+
 section .text
 main:                                 
 	call 	readkey
@@ -106,3 +107,24 @@ readkey:
 	je		shutdown
 	leave
 	ret
+
+shift:
+	;Shift happens only in one direction: From left to right. It's a matter of a viewpoint. 
+	;What you are trying to handle is just 4 numbers...
+	;	011f 001e 0011 0110 0ee1 1111 0000 1010 10e0 0101 010e 0001 1001 100e 1000
+	;1. If all 4 numbers are 0, do nothing
+	;	011e 001e 0011 0110 0ee1 1111 xxxx 1010 10e0 0101 010e 0001 1001 100e 1000
+	;2. If first one is non zero and the rest is zero, do nothing...
+	;	011e 001e 0011 0110 0ee1 1111 xxxx 1010 10e0 0101 010e 0001 1001 100e xxxx
+	;3. If first byte is 0, Left Logical shift by 8 bits till it becomes something. 
+	;	11e0 1e00 1100 1100 ee10 1111 xxxx 1010 10e0 1010 10e0 1000 1001 100e xxxx
+	;4. Do the same for the bytes 2 and 3
+	;	11e0 1e00 1100 1100 ee10 1111 xxxx 1100 1e00 1100 1e00 1000 1100 1e00 xxxx
+	;5. If there are only 1 number in the row, return it, no changes
+	;	11e0 1e00 1100 1100 ee10 1111 xxxx 1100 1e00 1100 1e00 xxxx 1100 1e00 xxxx
+	;6. If the first two bytes are equal, inc first byte and remove the second byte
+	;	2e00 1e00 2000 2000 f100 2110 xxxx 2000 1e00 2000 1e00 xxxx 2000 1e00 xxxx
+	;7. Repeat steps 1, 5, 6 byes 2 and 3
+	;	xxxx xxxx xxxx xxxx xxxx 2200 xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+	;PROFIT!
+	
