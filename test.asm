@@ -12,8 +12,8 @@ segment  .data
 	resp	db	"a"
 
 segment	.bbs
-	stor	dw	0x0000000000000000f,0x0000000000000000f
-	;stor	dw	0x1e1e1e1e1e1e1e1ef,0x1e1e1e1e1e1e1e1ef
+	;stor	dw	0x0001020300000000f,0x0000000000000000f
+	stor	db	0x00, 0x01, 0x02, 0x03, 0x0c, 0x0d, 0x0e, 0x0f, 0x08, 0x09, 0x0a, 0x0b , 0x04, 0x05, 0x06, 0x07
 	;				byte addressing
 	; 00 00 00 00	[stor  ]	[stor+1]	[stor+2]	[stor+3]
 	; 00 01 00 00	[stor+4]	[stor+5]	[stor+6]	[stor+7]
@@ -44,7 +44,6 @@ segment	.bbs
 section .text
 main:                                 
 	call 	readkey
-
 	call	showoff
 	jmp		main	
 
@@ -52,51 +51,98 @@ main:
 shutdown: 
 	xor 	rax, rax	
 	call 	ExitProcess
+	ret
+
+convert:
+	;Put the memory in bx, receive the value in al
+	add		r14, stor
+	mov		r14b, byte [r14]
+	cmp		r14b, 0x9
+	jle		less
+	add		r14b, 39
+less:
+	add		r14b, 48
+	
+	mov		al, r14b
+	ret
+
+
 showoff:
 	xor		rdx, rdx
 	xor		r8, r8
 	xor		r9, r9
-	mov 	dl, byte [stor]
-	mov 	r8b, byte [stor+1]
-	mov 	r9b,  byte [stor+2]
+
+	mov		r14, 00;
+	call	convert
+	mov		dl, al
+
+	mov		r14, 01;
+	call	convert
+	mov		r8b, al
+	
+	mov		r14, 02;
+	call	convert
+	mov		r9b, al
 
 	push 	rbp
 	mov 	rbp, rsp
+
+	mov		r14, 7
+	call	convert
+	push 	rax	
+
+	mov		r14, 6
+	call	convert
+	push 	rax	
+
+	mov		r14, 5
+	call	convert
+	push 	rax	
+
+	mov		r14, 4
+	call	convert
+	push 	rax	
+
+
+	mov		r14, 11
+	call	convert
+	push 	rax		
+
+	mov		r14, 10
+	call	convert
+	push 	rax
+
+	mov		r14, 9
+	call	convert
+	push 	rax	
+
+	mov		r14, 8
+	call	convert
+	push 	rax	
+
 	
-	xor		r10, r10
-	mov		r10b,[mem+15] 
-	push	r10
-	mov		r10b,[mem+14] 
-	push	r10
-	mov		r10b,[mem+13] 
-	push	r10
-	mov		r10b,[mem+12] 
-	push	r10
-	mov		r10b,[mem+11] 
-	push	r10
-	mov		r10b,[mem+10] 
-	push	r10
-	mov		r10b,[mem+9] 
-	push	r10
-	mov		r10b,[mem+8] 
-	push	r10
-	mov		r10b,[mem+7] 
-	push	r10
-	mov		r10b,[mem+6] 
-	push	r10
-	mov		r10b,[mem+5] 
-	push	r10
-	mov		r10b,[mem+4] 
-	push	r10
-	mov		r10b,[mem+3] 
-	push	r10
+	mov		r14, 15
+	call	convert
+	push 	rax
+
+	mov		r14, 14
+	call	convert
+	push 	rax
+
+	mov		r14, 13
+	call	convert
+	push 	rax	
+
+	mov		r14, 12
+	call	convert
+	push 	rax
+
+	mov		r14, 3
+	call	convert
+	push 	rax	
 
 	sub 	rsp, 32
-	
-	 
 	lea 	rcx, [fmt]
-
-
 	call 	printf
 	leave
 	ret
