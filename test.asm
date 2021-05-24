@@ -8,12 +8,9 @@ default 	rel
 
 segment  .data
 	fmt 	db 	"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa, 0
-	mem		db 	"0","1","2","3","4","5","6","7","8","9","a","b","c","d","f","z"
 	resp	db	"a"
-
 segment	.bbs
-	;stor	dw	0x0001020300000000f,0x0000000000000000f
-	stor	db	0x00, 0x01, 0x02, 0x03, 0x0c, 0x0d, 0x0e, 0x0f, 0x08, 0x09, 0x0a, 0x0b , 0x04, 0x05, 0x06, 0x07
+	stor	db	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
 	;				byte addressing
 	; 00 00 00 00	[stor  ]	[stor+1]	[stor+2]	[stor+3]
 	; 00 01 00 00	[stor+4]	[stor+5]	[stor+6]	[stor+7]
@@ -87,22 +84,21 @@ showoff:
 	push 	rbp
 	mov 	rbp, rsp
 
-	mov		r14, 7
+	mov		r14, 15
+	call	convert
+	push 	rax
+
+	mov		r14, 14
+	call	convert
+	push 	rax
+
+	mov		r14, 13
 	call	convert
 	push 	rax	
 
-	mov		r14, 6
+	mov		r14, 12
 	call	convert
-	push 	rax	
-
-	mov		r14, 5
-	call	convert
-	push 	rax	
-
-	mov		r14, 4
-	call	convert
-	push 	rax	
-
+	push 	rax
 
 	mov		r14, 11
 	call	convert
@@ -120,23 +116,21 @@ showoff:
 	call	convert
 	push 	rax	
 
-	
-	mov		r14, 15
-	call	convert
-	push 	rax
-
-	mov		r14, 14
-	call	convert
-	push 	rax
-
-	mov		r14, 13
+	mov		r14, 7
 	call	convert
 	push 	rax	
 
-	mov		r14, 12
+	mov		r14, 6
 	call	convert
-	push 	rax
+	push 	rax	
 
+	mov		r14, 5
+	call	convert
+	push 	rax	
+
+	mov		r14, 4
+	call	convert
+	push 	rax	
 	mov		r14, 3
 	call	convert
 	push 	rax	
