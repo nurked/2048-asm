@@ -3,14 +3,17 @@ default 	rel
 	global    main                
 	extern    printf              
 	extern    getch               
-	extern    ExitProcess         
-	extern    scanf               
+	extern    ExitProcess                
 
 segment  .data
+	stor	db	0x00, 0x01, 0x02, 0x00, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x00, 0x0d, 0x0e, 0x0f
+
 	fmt 	db 	"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa, 0
 	resp	db	"a"
+
 segment	.bbs
-	stor	db	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+	;stor	db	   0,    1,    2,    0,    4,    5,    6,    7,    8,    9,    a,    b,    c,    d,    e,    f
+
 	;				byte addressing
 	; 00 00 00 00	[stor  ]	[stor+1]	[stor+2]	[stor+3]
 	; 00 01 00 00	[stor+4]	[stor+5]	[stor+6]	[stor+7]
@@ -39,18 +42,34 @@ segment	.bbs
 
 
 section .text
-main:                                 
+main:    
+	push 	rbp
+	mov 	rbp, rsp
+	sub 	rsp, 32
+	call 	showoff
+mainloop:                             
 	call 	readkey
+
+	cmp		dword [resp], 's'
+	je		shutdown
+	cmp		dword [resp], 'j'
+	jne		cont2
+	call	down
+cont2:
 	call	showoff
-	jmp		main	
+	jmp		mainloop	
 
 
 shutdown: 
 	xor 	rax, rax	
 	call 	ExitProcess
+	leave
 	ret
 
 convert:
+	push 	rbp
+	mov 	rbp, rsp
+	sub 	rsp, 32
 	;Put the memory in bx, receive the value in al
 	add		r14, stor
 	mov		r14b, byte [r14]
@@ -59,12 +78,15 @@ convert:
 	add		r14b, 39
 less:
 	add		r14b, 48
-	
 	mov		al, r14b
+	leave
 	ret
 
 
 showoff:
+	push 	rbp
+	mov 	rbp, rsp
+
 	xor		rdx, rdx	;Clearing the registers we are going to use
 	xor		r8, r8
 	xor		r9, r9
@@ -82,9 +104,10 @@ showoff:
 	call	convert
 	mov		r9b, al		;r9 - forth param
 
-	push 	rbp			;save the stack pointer
-	mov 	rbp, rsp
-
+	; push 	rbp			;save the stack pointer
+	; mov 	rbp, rsp
+	
+	
 	mov		r13, 15		; run thru the rest of the data and push it via the stack
 	loop1:
 
@@ -95,9 +118,11 @@ showoff:
 		cmp		r13, 2
 		jne		loop1
 
-	sub 	rsp, 32		;create shadow space
+	sub	rsp, 32
+	
 	lea 	rcx, [fmt]	;Load the format string into memory
 	call 	printf		;call printf
+
 	leave				;we done for now, thank you!
 	ret
 
@@ -107,41 +132,123 @@ readkey:
 	sub 	rsp, 32
 	call	getch
 	mov		[resp], rax
-	cmp		dword [resp], 's'
-	je		shutdown
 	leave
 	ret
 
+
+down:
+	push 	rbp
+	mov 	rbp, rsp
+	sub 	rsp, 32
+
+	mov		r10b, byte [stor + 0xc];
+	shl		r10, 8
+	add		r10b, byte [stor + 0x8];
+	shl		r10, 8
+	add		r10b, byte [stor + 0x4];
+	shl		r10, 8
+	add		r10b, byte [stor + 0x0];
+
+	call 	shift
+	mov		[stor + 0x0], r10b
+	shr		r10, 8
+	mov		[stor + 0x4], r10b
+	shr		r10, 8
+	mov		[stor + 0x8], r10b
+	shr		r10, 8
+	mov		[stor + 0xc], r10b
+	
+
+	mov		r10, [stor + 0xd];
+	shl		r10, 8
+	add		r10, [stor + 0x9];
+	shl		r10, 8
+	add		r10, [stor + 0x5];
+	shl		r10, 8
+	add		r10, [stor + 0x1];
+
+	call 	shift
+	mov		[stor + 0x1], r10b
+	shr		r10, 8
+	mov		[stor + 0x5], r10b
+	shr		r10, 8
+	mov		[stor + 0x9], r10b
+	shr		r10, 8
+	mov		[stor + 0xd], r10b
+	
+
+	mov		r10, [stor + 0xe];
+	shl		r10, 8
+	add		r10, [stor + 0xa];
+	shl		r10, 8
+	add		r10, [stor + 0x6];
+	shl		r10, 8
+	add		r10, [stor + 0x2];
+
+	call 	shift
+	mov		[stor + 0x2], r10b
+	shr		r10, 8
+	mov		[stor + 0x6], r10b
+	shr		r10, 8
+	mov		[stor + 0xa], r10b
+	shr		r10, 8
+	mov		[stor + 0xe], r10b
+	
+
+	mov		r10, [stor + 0xf];
+	shl		r10, 8
+	add		r10, [stor + 0xb];
+	shl		r10, 8
+	add		r10, [stor + 0x7];
+	shl		r10, 8
+	add		r10, [stor + 0x3];
+
+	call 	shift
+	mov		[stor + 0x3], r10b
+	shr		r10, 8
+	mov		[stor + 0x7], r10b
+	shr		r10, 8
+	mov		[stor + 0xb], r10b
+	shr		r10, 8
+	mov		[stor + 0xf], r10b
+	
+	leave
+	ret
+	
 shift:
+
+	push 	rbp
+	mov 	rbp, rsp
+	sub 	rsp, 16
 	;Shift happens only in one direction: From left to right. It's a matter of a viewpoint. 
 	;What you are trying to handle is just 4 numbers...
 	;	011f 001e 0011 0110 0ee1 1111 0000 1010 10e0 0101 010e 0001 1001 100e 1000
 	
 	;1. If all 4 numbers are 0, return, we are done
 	;	011e 001e 0011 0110 0ee1 1111 xxxx 1010 10e0 0101 010e 0001 1001 100e 1000
-	test 	r10w, r10w
+	test 	r10d, r10d
 	je		done
 
 	;2. If first one is non zero and the rest is zero, do nothing...
 	;	011e 001e 0011 0110 0ee1 1111 xxxx 1010 10e0 0101 010e 0001 1001 100e xxxx
-	mov		r11w, r10w ;Check if we have only first digit
-	shl		r11w, 8
-	test	r11w, r11w
-	ret
-
+	mov		r11d, r10d ;Check if we have only first digit
+	shl		r11d, 8
+	test	r11d, r11d
+	je		done
+	
 	;3. If first byte is 0, Left Logical shift by 8 bits till it becomes something. 
 	;	11e0 1e00 1100 1100 ee10 1111 xxxx 1010 10e0 1010 10e0 1000 1001 100e xxxx
-	mov		r11w, r10w
-	shr		r11w, 24
-	test	r11w, r11w
-	je 	doneshift
-	shl		r10w, 8 	;first symbol is not 0, so shift
+	mov		r11d, r10d
+	shr		r11d, 24
+	test	r11d, r11d
+	jne 	doneshift
+	shl		r10d, 8 	;first symbol is not 0, so shift
 
-	mov		r11w, r10w
-	shr		r11w, 24
-	test	r11w, r11w
-	je 	doneshift
-	shl		r10w, 8 	;second symbol is not 0, so shift
+	mov		r11d, r10d
+	shr		r11d, 24
+	test	r11d, r11d
+	jne 	doneshift
+	shl		r10d, 8 	;second symbol is not 0, so shift
 doneshift:	;There can't be other sits in this scenario, so we are happy with what we have now, carry on.
 	
 	;4. Do the same for the bytes 2 and 3
@@ -187,6 +294,7 @@ doneshift:	;There can't be other sits in this scenario, so we are happy with wha
 	;7. Repeat steps 1, 5, 6 byes 2 and 3
 	;	xxxx xxxx xxxx xxxx xxxx 2200 xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 	;PROFIT!
-	ret
+
 done:
+	leave
 	ret
