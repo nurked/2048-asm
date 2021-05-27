@@ -1,3 +1,21 @@
+%macro memtoreg 4
+	xor r10, r10
+	mov r10b, byte [stor + %4]
+	xor r11, r11
+	mov r11b, byte [stor + %3]
+	xor r12, r12
+	mov r12b, byte [stor + %2]
+	xor r13, r13
+	mov r13b, byte [stor + %1]
+%endmacro
+
+%macro regtomem 4
+	mov [stor + %4], r10b
+	mov [stor + %3], r11b
+	mov [stor + %2], r12b
+	mov [stor + %1], r13b
+%endmacro
+
 
 
 
@@ -6,76 +24,24 @@ down:
 	mov 	rbp, rsp
 	sub 	rsp, 32
 
-	mov		r10b, byte [stor + 0xc];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x8];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x4];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x0];
-
+	memtoreg	0x0, 0x4, 0x8, 0xc
 	call 	shift
-	mov		[stor + 0x0], r10b
-	shr		r10, 8
-	mov		[stor + 0x4], r10b
-	shr		r10, 8
-	mov		[stor + 0x8], r10b
-	shr		r10, 8
-	mov		[stor + 0xc], r10b
+	regtomem	0x0, 0x4, 0x8, 0xc
+
+	
+	memtoreg 	0x1, 0x5, 0x9, 0xd
+ 	call 	shift
+	regtomem 	0x1, 0x5, 0x9, 0xd
 	
 
-	mov		r10b, byte [stor + 0xd];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x9];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x5];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x1];
-
+	memtoreg 	0x2, 0x6, 0xa, 0xe
 	call 	shift
-	mov		[stor + 0x1], r10b
-	shr		r10, 8
-	mov		[stor + 0x5], r10b
-	shr		r10, 8
-	mov		[stor + 0x9], r10b
-	shr		r10, 8
-	mov		[stor + 0xd], r10b
+	regtomem 	0x2, 0x6, 0xa, 0xe
 	
 
-	mov		r10b, byte [stor + 0xe];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xa];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x6];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x2];
-
+	memtoreg 	0x3, 0x7, 0xb, 0xf
 	call 	shift
-	mov		[stor + 0x2], r10b
-	shr		r10, 8
-	mov		[stor + 0x6], r10b
-	shr		r10, 8
-	mov		[stor + 0xa], r10b
-	shr		r10, 8
-	mov		[stor + 0xe], r10b
-	
-
-	mov		r10b, byte [stor + 0xf];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xb];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x7];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x3];
-
-	call 	shift
-	mov		[stor + 0x3], r10b
-	shr		r10, 8
-	mov		[stor + 0x7], r10b
-	shr		r10, 8
-	mov		[stor + 0xb], r10b
-	shr		r10, 8
-	mov		[stor + 0xf], r10b
+	regtomem 	0x3, 0x7, 0xb, 0xf
 	
 	leave
 	ret
@@ -85,77 +51,25 @@ up:
 	mov 	rbp, rsp
 	sub 	rsp, 32
 
-	mov		r10b, byte [stor + 0x0];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x4];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x8];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xc];
-
+	memtoreg	0xc, 0x8, 0x4, 0x0
 	call 	shift
-	mov		[stor + 0xc], r10b
-	shr		r10, 8
-	mov		[stor + 0x8], r10b
-	shr		r10, 8
-	mov		[stor + 0x4], r10b
-	shr		r10, 8
-	mov		[stor + 0x0], r10b
+	regtomem	0xc, 0x8, 0x4, 0x0
+
+	
+	memtoreg 	0xd, 0x9, 0x5, 0x1
+ 	call 	shift
+	regtomem 	0xd, 0x9, 0x5, 0x1
 	
 
-	mov		r10b, byte [stor + 0x1];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x5];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x9];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xd];
-
+	memtoreg 	0xe, 0xa, 0x6, 0x2
 	call 	shift
-	mov		[stor + 0xd], r10b
-	shr		r10, 8
-	mov		[stor + 0x9], r10b
-	shr		r10, 8
-	mov		[stor + 0x5], r10b
-	shr		r10, 8
-	mov		[stor + 0x1], r10b
+	regtomem 	0xe, 0xa, 0x6, 0x2
 	
 
-	mov		r10b, byte [stor + 0x2];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x6];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xa];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xe];
-
+	memtoreg 	0xf, 0xb, 0x7, 0x3
 	call 	shift
-	mov		[stor + 0xe], r10b
-	shr		r10, 8
-	mov		[stor + 0xa], r10b
-	shr		r10, 8
-	mov		[stor + 0x6], r10b
-	shr		r10, 8
-	mov		[stor + 0x2], r10b
-	
+	regtomem 	0xf, 0xb, 0x7, 0x3
 
-	mov		r10b, byte [stor + 0x3];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x7];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xb];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xf];
-
-	call 	shift
-	mov		[stor + 0xf], r10b
-	shr		r10, 8
-	mov		[stor + 0xb], r10b
-	shr		r10, 8
-	mov		[stor + 0x7], r10b
-	shr		r10, 8
-	mov		[stor + 0x3], r10b
-	
 	leave
 	ret
 
@@ -165,76 +79,24 @@ left:
 	mov 	rbp, rsp
 	sub 	rsp, 32
 
-	mov		r10b, byte [stor + 0x0];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x1];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x2];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x3];
-
+	memtoreg	0x3, 0x2, 0x1, 0x0
 	call 	shift
-	mov		[stor + 0x3], r10b
-	shr		r10, 8
-	mov		[stor + 0x2], r10b
-	shr		r10, 8
-	mov		[stor + 0x1], r10b
-	shr		r10, 8
-	mov		[stor + 0x0], r10b
+	regtomem	0x3, 0x2, 0x1, 0x0
+
+	
+	memtoreg 	0x7, 0x6, 0x5, 0x4
+ 	call 	shift
+	regtomem 	0x7, 0x6, 0x5, 0x4
 	
 
-	mov		r10b, byte [stor + 0x4];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x5];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x6];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x7];
-
+	memtoreg 	0xb, 0xa, 0x9, 0x8
 	call 	shift
-	mov		[stor + 0x7], r10b
-	shr		r10, 8
-	mov		[stor + 0x6], r10b
-	shr		r10, 8
-	mov		[stor + 0x5], r10b
-	shr		r10, 8
-	mov		[stor + 0x4], r10b
+	regtomem 	0xb, 0xa, 0x9, 0x8
 	
 
-	mov		r10b, byte [stor + 0x8];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x9];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xa];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xb];
-
+	memtoreg 	0xf, 0xe, 0xd, 0xc
 	call 	shift
-	mov		[stor + 0xb], r10b
-	shr		r10, 8
-	mov		[stor + 0xa], r10b
-	shr		r10, 8
-	mov		[stor + 0x9], r10b
-	shr		r10, 8
-	mov		[stor + 0x8], r10b
-	
-
-	mov		r10b, byte [stor + 0xc];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xd];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xe];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xf];
-
-	call 	shift
-	mov		[stor + 0xf], r10b
-	shr		r10, 8
-	mov		[stor + 0xe], r10b
-	shr		r10, 8
-	mov		[stor + 0xd], r10b
-	shr		r10, 8
-	mov		[stor + 0xc], r10b
+	regtomem 	0xf, 0xe, 0xd, 0xc
 	
 	leave
 	ret
@@ -244,76 +106,24 @@ right:
 	mov 	rbp, rsp
 	sub 	rsp, 32
 
-	mov		r10b, byte [stor + 0x3];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x2];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x1];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x0];
-
+	memtoreg	0x0, 0x1, 0x2, 0x3
 	call 	shift
-	mov		[stor + 0x0], r10b
-	shr		r10, 8
-	mov		[stor + 0x1], r10b
-	shr		r10, 8
-	mov		[stor + 0x2], r10b
-	shr		r10, 8
-	mov		[stor + 0x3], r10b
+	regtomem	0x0, 0x1, 0x2, 0x3
+
+	
+	memtoreg 	0x4, 0x5, 0x6, 0x7
+ 	call 	shift
+	regtomem 	0x4, 0x5, 0x6, 0x7
 	
 
-	mov		r10b, byte [stor + 0x7];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x6];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x5];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x4];
-
+	memtoreg 	0x8, 0x9, 0xa, 0xb
 	call 	shift
-	mov		[stor + 0x4], r10b
-	shr		r10, 8
-	mov		[stor + 0x5], r10b
-	shr		r10, 8
-	mov		[stor + 0x6], r10b
-	shr		r10, 8
-	mov		[stor + 0x7], r10b
+	regtomem 	0x8, 0x9, 0xa, 0xb
 	
 
-	mov		r10b, byte [stor + 0xb];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xa];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x9];
-	shl		r10, 8
-	add		r10b, byte [stor + 0x8];
-
+	memtoreg 	0xc, 0xd, 0xe, 0xf
 	call 	shift
-	mov		[stor + 0x8], r10b
-	shr		r10, 8
-	mov		[stor + 0x9], r10b
-	shr		r10, 8
-	mov		[stor + 0xa], r10b
-	shr		r10, 8
-	mov		[stor + 0xb], r10b
-	
-
-	mov		r10b, byte [stor + 0xf];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xe];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xd];
-	shl		r10, 8
-	add		r10b, byte [stor + 0xc];
-
-	call 	shift
-	mov		[stor + 0xc], r10b
-	shr		r10, 8
-	mov		[stor + 0xd], r10b
-	shr		r10, 8
-	mov		[stor + 0xe], r10b
-	shr		r10, 8
-	mov		[stor + 0xf], r10b
+	regtomem 	0xc, 0xd, 0xe, 0xf
 	
 	leave
 	ret
