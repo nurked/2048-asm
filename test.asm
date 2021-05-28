@@ -6,9 +6,10 @@ default 	rel
 	extern    ExitProcess                
 
 segment  .data
-	stor	db	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
+	stor	db	0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 
 	fmt 	db 	"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa, "-------",0xd, 0xa, 0
+	lost 	db 	"You are done!",0xd, 0xa, 0
 	resp	db	"a"
 
 segment	.bbs
@@ -71,7 +72,7 @@ cont_no_left:
 	jne		cont_no_right
 	call	right
 cont_no_right:
-
+	call	spawn
 	call	showoff
 	jmp		mainloop	
 
@@ -112,7 +113,19 @@ readkey:
 	leave
 	ret
 
+loose:
+	push 	rbp
+	mov 	rbp, rsp
+	sub 	rsp, 32
+	lea 	rcx, [lost]	;Load the format string into memory
+	call 	printf
+	jmp		shutdown
+	leave
+	ret	
+
 %include "display.asm"
+
+%include "spawn.asm"
 
 %include "memory_compression.asm"
 
