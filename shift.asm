@@ -255,7 +255,9 @@ solve_second_3_cont4:
 	inc		r12
 	mov		r13, 0x0
 solve_second_3_cont5:
-
+	cmp		r11, r12
+	je		solve_middle_2
+	
 	jmp 	done	
 
 solve_middle_2:
