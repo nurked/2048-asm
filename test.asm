@@ -51,24 +51,24 @@ main:
 mainloop:                             
 	call 	readkey
 
-	cmp		dword [resp], 's'
+	cmp		byte [resp], 's'
 	je		shutdown
 
-	cmp		dword [resp], 'j'
+	cmp		byte [resp], 'j'
 	jne		cont_no_down
 	call	down
 cont_no_down:
-	cmp		dword [resp], 'k'
+	cmp		byte [resp], 'k'
 	jne		cont_no_up
 	call	up
 cont_no_up:
 
-	cmp		dword [resp], 'h'
+	cmp		byte [resp], 'h'
 	jne		cont_no_left
 	call	left
 cont_no_left:
 
-	cmp		dword [resp], 'l'
+	cmp		byte [resp], 'l'
 	jne		cont_no_right
 	call	right
 cont_no_right:
@@ -109,7 +109,7 @@ readkey:
 	mov 	rbp, rsp
 	sub 	rsp, 32
 	call	getch
-	mov		[resp], rax
+	mov		[resp], al
 	leave
 	ret
 
