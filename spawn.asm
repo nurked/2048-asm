@@ -17,7 +17,7 @@ spawn_continue:
     cmp     r14, 15
     jne     spawn_loop
     
-    call    loose
+    call    lose
     
 spawn_done:
     leave

@@ -1,7 +1,7 @@
 bits		64
 default 	rel
 	global    main                
-	extern    printf              
+	extern    WriteFile
 	extern    GetStdHandle
 	extern    ReadConsoleInputW
 	extern    ExitProcess                
@@ -9,8 +9,10 @@ default 	rel
 segment  .data
 	stor	db	0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 
-	fmt 	db 	"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa,"%c %c %c %c", 0xd, 0xa, "-------",0xd, 0xa, 0
-	lost 	db 	"You are done!",0xd, 0xa, 0
+	separ 	db 	"-------"
+	lost 	db 	"You are done!"
+	newline	db	0xd, 0xa
+	powers	db	"    0    1    2    4    8   16   32   64  128  256  512 1024 2048"
 
 segment	.bss
 	input	resw 2 ; 2nd word for padding
@@ -22,6 +24,7 @@ segment	.bss
 	dwControlKeyState resd 1
 	read	resd 1
 	hStdin 	resq 1
+	hStdout	resq 1
 
 	;stor	db	   0,    1,    2,    0,    4,    5,    6,    7,    8,    9,    a,    b,    c,    d,    e,    f
 
@@ -54,13 +57,13 @@ segment	.bss
 
 section .text
 main:    
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-
 	mov rcx, -10 ;STD_INPUT_HANDLE
 	call GetStdHandle
 	mov [hStdin], rax
+
+	mov rcx, -11 ;STD_OUTPUT_HANDLE
+	call GetStdHandle
+	mov [hStdout], rax
 
 	call 	showoff
 mainloop:                             
@@ -98,33 +101,14 @@ next:
 	call	showoff
 	jmp	mainloop
 
+lose:
+	lea	rdx, [lost]
+	mov	r8, powers-lost
+	call 	print
 
 shutdown:
-
-	 
-	xor 	rax, rax	
-	call 	ExitProcess
-	leave
-	ret
-
-convert:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-	;Put the memory in bx, receive the value in al
-	add		r14, stor
-	mov		r14b, byte [r14]
-	cmp		r14b, 0x9
-	jle		less
-	add		r14b, 39
-less:
-	add		r14b, 48
-	mov		al, r14b
-	leave
-	ret
-
-
-
+	xor 	rcx, rcx
+	jmp 	ExitProcess ; tailcall
 
 readkey:
 	mov rcx, [hStdin]
@@ -139,16 +123,6 @@ readkey:
 	cmp word [input], 1 ;KEY_EVENT
 	jne readkey
 	ret
-
-loose:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-	lea 	rcx, [lost]	;Load the format string into memory
-	call 	printf
-	jmp		shutdown
-	leave
-	ret	
 
 %include "display.asm"
 
