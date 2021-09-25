@@ -1,131 +1,69 @@
-%macro memtoreg 4
-	mov al, [rsi + %4]
+memtoreg:
+	mov al, [rsi + rdi + 12]
 	shl rax, cl
-	mov al, [rsi + %3]
+	mov al, [rsi + rdi + 8]
 	shl rax, cl
-	mov al, [rsi + %2]
+	mov al, [rsi + rdi + 4]
 	shl rax, cl
-	mov al, [rsi + %1]
-%endmacro
+	mov al, [rsi + rdi]
+	ret
 
-%macro regtomem 4
-	mov [rsi + %4], al
+regtomem:
+	mov [rsi + rdi + 12], al
 	shr rax, cl
-	mov [rsi + %3], al
+	mov [rsi + rdi + 8], al
 	shr rax, cl
-	mov [rsi + %2], al
+	mov [rsi + rdi + 4], al
 	shr rax, cl
-	mov [rsi + %1], al
-%endmacro
-
-
-
+	mov [rsi + rdi], al
+	ret
 
 down:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-
-	memtoreg	0x0, 0x4, 0x8, 0xc
+	xor	rdi, rdi
+next_down:
+	call	memtoreg
 	call 	shift
-	regtomem	0x0, 0x4, 0x8, 0xc
-
-	
-	memtoreg 	0x1, 0x5, 0x9, 0xd
- 	call 	shift
-	regtomem 	0x1, 0x5, 0x9, 0xd
-	
-
-	memtoreg 	0x2, 0x6, 0xa, 0xe
-	call 	shift
-	regtomem 	0x2, 0x6, 0xa, 0xe
-	
-
-	memtoreg 	0x3, 0x7, 0xb, 0xf
-	call 	shift
-	regtomem 	0x3, 0x7, 0xb, 0xf
-	
-	leave
+	call 	regtomem
+	inc	rdi
+	cmp	rdi, 4
+	jb	next_down
 	ret
 	
 up:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-
-	memtoreg	0xc, 0x8, 0x4, 0x0
+	xor	rdi, rdi
+next_up:
+	call	memtoreg
+	bswap	eax
 	call 	shift
-	regtomem	0xc, 0x8, 0x4, 0x0
-
-	
-	memtoreg 	0xd, 0x9, 0x5, 0x1
- 	call 	shift
-	regtomem 	0xd, 0x9, 0x5, 0x1
-	
-
-	memtoreg 	0xe, 0xa, 0x6, 0x2
-	call 	shift
-	regtomem 	0xe, 0xa, 0x6, 0x2
-	
-
-	memtoreg 	0xf, 0xb, 0x7, 0x3
-	call 	shift
-	regtomem 	0xf, 0xb, 0x7, 0x3
-
-	leave
+	bswap	eax
+	call 	regtomem
+	inc	rdi
+	cmp	rdi, 4
+	jb	next_up
 	ret
 
-
 left:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-
-	memtoreg	0x3, 0x2, 0x1, 0x0
+	mov 	rdi, rsi
+	mov	bl, 4
+next_left:
+	lodsd
+	bswap	eax
 	call 	shift
-	regtomem	0x3, 0x2, 0x1, 0x0
-
-	
-	memtoreg 	0x7, 0x6, 0x5, 0x4
- 	call 	shift
-	regtomem 	0x7, 0x6, 0x5, 0x4
-	
-
-	memtoreg 	0xb, 0xa, 0x9, 0x8
-	call 	shift
-	regtomem 	0xb, 0xa, 0x9, 0x8
-	
-
-	memtoreg 	0xf, 0xe, 0xd, 0xc
-	call 	shift
-	regtomem 	0xf, 0xe, 0xd, 0xc
-	
-	leave
+	stosd
+	dec	bl
+	jnz	next_left
+	sub	rsi, 16
 	ret
 
 right:
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
-
-	memtoreg	0x0, 0x1, 0x2, 0x3
+	mov 	rdi, rsi
+	mov	bl, 4
+next_right:
+	lodsd
 	call 	shift
-	regtomem	0x0, 0x1, 0x2, 0x3
-
-	
-	memtoreg 	0x4, 0x5, 0x6, 0x7
- 	call 	shift
-	regtomem 	0x4, 0x5, 0x6, 0x7
-	
-
-	memtoreg 	0x8, 0x9, 0xa, 0xb
-	call 	shift
-	regtomem 	0x8, 0x9, 0xa, 0xb
-	
-
-	memtoreg 	0xc, 0xd, 0xe, 0xf
-	call 	shift
-	regtomem 	0xc, 0xd, 0xe, 0xf
-	
-	leave
+	bswap	eax
+	stosd
+	dec	bl
+	jnz	next_right
+	sub	rsi, 16
 	ret
