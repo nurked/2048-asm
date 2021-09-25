@@ -3,7 +3,7 @@ showoff:
 	xor		r13, r13
 
 	loop1:
-		mov	r13b, [stor + r14]
+		mov	r13b, [rsi + r14]
 		call	color_wrap
 		inc	r14
 		test	r14, 3

@@ -70,6 +70,7 @@ main:
 	call GetStdHandle
 	mov [hStdout], rax
 
+	lea	rsi, [stor]
 	call 	showoff
 mainloop:                             
 	call 	readkey

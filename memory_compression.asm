@@ -1,21 +1,21 @@
 %macro memtoreg 4
-	mov al, [stor + %4]
+	mov al, [rsi + %4]
 	shl rax, cl
-	mov al, [stor + %3]
+	mov al, [rsi + %3]
 	shl rax, cl
-	mov al, [stor + %2]
+	mov al, [rsi + %2]
 	shl rax, cl
-	mov al, [stor + %1]
+	mov al, [rsi + %1]
 %endmacro
 
 %macro regtomem 4
-	mov [stor + %4], al
+	mov [rsi + %4], al
 	shr rax, cl
-	mov [stor + %3], al
+	mov [rsi + %3], al
 	shr rax, cl
-	mov [stor + %2], al
+	mov [rsi + %2], al
 	shr rax, cl
-	mov [stor + %1], al
+	mov [rsi + %1], al
 %endmacro
 
 
