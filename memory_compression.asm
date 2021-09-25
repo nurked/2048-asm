@@ -1,19 +1,21 @@
 %macro memtoreg 4
-	xor r10, r10
-	mov r10b, byte [stor + %4]
-	xor r11, r11
-	mov r11b, byte [stor + %3]
-	xor r12, r12
-	mov r12b, byte [stor + %2]
-	xor r13, r13
-	mov r13b, byte [stor + %1]
+	mov al, [stor + %4]
+	shl rax, cl
+	mov al, [stor + %3]
+	shl rax, cl
+	mov al, [stor + %2]
+	shl rax, cl
+	mov al, [stor + %1]
 %endmacro
 
 %macro regtomem 4
-	mov [stor + %4], r10b
-	mov [stor + %3], r11b
-	mov [stor + %2], r12b
-	mov [stor + %1], r13b
+	mov [stor + %4], al
+	shr rax, cl
+	mov [stor + %3], al
+	shr rax, cl
+	mov [stor + %2], al
+	shr rax, cl
+	mov [stor + %1], al
 %endmacro
 
 

@@ -78,6 +78,7 @@ mainloop:
 
 	cmp	word [wVirtualKeyCode], 'S'
 	je	shutdown
+	mov	cl, 8 ; for the shifts
 
 	cmp	word [wVirtualKeyCode], 0x28 ;VK_DOWN
 	jne	cont_no_down
