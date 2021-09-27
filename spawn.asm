@@ -1,24 +1,36 @@
-spawn:  ;Simple spawner for now. Going thru the memory and just drop 1 in any free cell we can find. 
-	push 	rbp
-	mov 	rbp, rsp
-	sub 	rsp, 32
+extern    GetTickCount ; our PRNG
 
-    
-    mov     r14, 0
+
+spawn:
+    mov     rcx, 16
+    xor     r13, r13
+count_loop:
+    cmp     byte [stor+rcx-1], 0
+    jne     skip
+    inc     r13
+skip:
+    loop    count_loop
+
+    or      r13, r13
+    jz      lose
+
+    call    GetTickCount
+    xor     rdx, rdx
+    div     r13
+    inc     rdx ; 1..r13
+
+    mov     rcx, 16
 spawn_loop:
-    mov     r15b, byte [stor+r14]
-
-    cmp     r15, 0x0
+    cmp     byte [stor+rcx-1], 0
     jne     spawn_continue
-    mov     byte [stor+r14], 1
+    dec     rdx
+    jnz     spawn_continue
+    mov     byte [stor+rcx-1], 1
     jmp     spawn_done
 spawn_continue:
-    inc     r14
-    cmp     r14, 15
-    jne     spawn_loop
-    
-    call    lose
+    loop    spawn_loop
+
+    int3 ; unreachable
     
 spawn_done:
-    leave
-	ret
+    ret
