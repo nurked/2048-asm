@@ -10,14 +10,14 @@ segment  .data
 	stor	db	0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 	;stor	db	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x00, 0x00, 0x00, 0x00 ;for checking colors
 
+segment .text
+	ansi	db	`\e[0m`
 	separ 	db 	"-------"
 	lost 	db 	"You are done!"
 	newline	db	0xd, 0xa
-	powers	db	"    0    1    2    4    8   16   32   64  128  256  512 1024 2048"
-	colors	db	"97 91 92 93 94 95 96 31 32 33 34 35 36 41 "
-	start_color	db	"["
-	mid_color	db	"m"
-	end_color	db	"[0m"
+	powers	db	"    .    2    4    8   16   32   64  128  256  512 1024 2048"
+	colors	db	"97919293949596313233343536"
+	;corresponding to:0 1 2 3 4 5 6 7 8 9 a b c
 
 segment	.bss
 	input	resw 2 ; 2nd word for padding
