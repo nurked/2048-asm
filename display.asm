@@ -3,7 +3,7 @@ showoff:
 	xor		r13, r13
 
 	loop1:
-		mov	r13b, [stor + r14]
+		mov	r13b, [rsi + r14]
 		call	color_wrap
 		inc	r14
 		test	r14, 3
@@ -14,29 +14,26 @@ showoff:
 		cmp	r14, 16
 		jb	loop1
 
-	lea	rdx, [separ]
-	mov	r8, lost-separ
+	lea	rdx, [ansi]
+	mov	r8, lost-ansi
 	call	print
 	lea	rdx, [newline]
 	mov	r8, 2
 	jmp	print ; tailcall
 
 color_wrap:
-	lea	rdx, [start_color]
+	lea	rdx, [ansi]
 	mov	r8, 2
 	call	print
-	lea	rdx, [colors + r13 + r13*2]
+	lea	rdx, [colors + r13*2]
 	mov	r8, 2
 	call	print
-	lea	rdx, [mid_color]
+	lea	rdx, [ansi + 3]
 	mov	r8, 1
 	call	print
 	lea	rdx, [powers + r13 + r13*4]
 	mov	r8, 5
-	call	print
-	lea	rdx, [end_color]
-	mov	r8, 4
-	call	print
+	; fall thru
 
 print: ; rdx->buffer r8->len
 	mov rcx, [hStdout]
