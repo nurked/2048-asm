@@ -34,4 +34,6 @@ copy:
 	shr	rdx, cl
 	jmp	combine_next
 done:
+	xor	r9, rax
+	or	r8, r9
 	ret

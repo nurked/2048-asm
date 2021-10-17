@@ -6,7 +6,7 @@ default 	rel
 	extern    ReadConsoleInputW
 	extern    ExitProcess                
 
-segment  .data
+segment  .idata
 	stor	db	0x01, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 	;stor	db	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x00, 0x00, 0x00, 0x00 ;for checking colors
 
@@ -15,6 +15,7 @@ segment .text
 	separ 	db 	"-------"
 	lost 	db 	"You are done!"
 	newline	db	0xd, 0xa
+	bell	db	7
 	powers	db	"    .    2    4    8   16   32   64  128  256  512 1024 2048"
 	colors	db	"97919293949596313233343536"
 	;corresponding to:0 1 2 3 4 5 6 7 8 9 a b c
@@ -80,6 +81,7 @@ mainloop:
 	cmp	word [wVirtualKeyCode], 'S'
 	je	shutdown
 	mov	cl, 8 ; for the shifts
+	xor	r8, r8
 
 	cmp	word [wVirtualKeyCode], 0x28 ;VK_DOWN
 	jne	cont_no_down
@@ -104,6 +106,14 @@ cont_no_left:
 	call	right
 
 next:
+	or	r8, r8
+	jnz	legal
+	lea	rdx, [bell]
+	inc	r8
+	call 	print
+	jmp	mainloop
+
+legal:
 	call	spawn
 	call	showoff
 	jmp	mainloop

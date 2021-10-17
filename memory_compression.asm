@@ -6,6 +6,7 @@ memtoreg:
 	mov al, [rsi + rdi + 4]
 	shl rax, cl
 	mov al, [rsi + rdi]
+	mov r9, rax
 	ret
 
 regtomem:
@@ -22,6 +23,7 @@ down:
 	xor	rdi, rdi
 next_down:
 	call	memtoreg
+	bswap	r9d
 	call 	shift
 	call 	regtomem
 	inc	rdi
@@ -47,6 +49,7 @@ left:
 	mov	bl, 4
 next_left:
 	lodsd
+	mov	r9, rax
 	bswap	eax
 	call 	shift
 	stosd
@@ -60,6 +63,8 @@ right:
 	mov	bl, 4
 next_right:
 	lodsd
+	mov	r9, rax
+	bswap	r9d
 	call 	shift
 	bswap	eax
 	stosd
